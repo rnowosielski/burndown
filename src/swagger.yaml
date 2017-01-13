@@ -5,8 +5,6 @@ info:
   title: "Hipchat Burndown"
 schemes:
 - "https"
-#x-amazon-apigateway-binary-media-types:
-#- image/png
 paths:
   /install:
     get:
@@ -66,57 +64,45 @@ paths:
         type: aws_proxy
         httpMethod: POST
         passthroughBehavior: when_no_match
-  /images/{id}/base64:
+  /burndown/{id}/{version}/image.png:
     get:
-      consumes:
-      - "application/json"
-      produces:
-      - "image/png"
       parameters:
       - name: id
         in: path
         description: The ID of the resource
         type: string
         required: true
+      - name: version
+        in: path
+        description: The ID of the resource
+        type: string
+        required: true
       responses:
-        200:
-          description: "200 response"
+        301:
+          description: "301 response"
       x-amazon-lambda-name: HipchatBurndown
       x-amazon-apigateway-integration:
         type: aws_proxy
         httpMethod: POST
         passthroughBehavior: when_no_match
-  /images/{id}/raw:
+  /burndown/{id}/{version}/thumbnail.png:
     get:
-      produces:
-      - "image/png"
-      tags:
-        - Fulfillment Locations
-      summary: Retrieves the fulfillment location with the given ID
-      description: Retrieves the fulfillment location with the given ID
       parameters:
       - name: id
         in: path
         description: The ID of the resource
         type: string
         required: true
+      - name: version
+        in: path
+        description: The ID of the resource
+        type: string
+        required: true
       responses:
-        200:
-          description: "200 response"
-          headers:
-            Content-Type:
-              type: string
+        301:
+          description: "301 response"
+      x-amazon-lambda-name: HipchatBurndown
       x-amazon-apigateway-integration:
-        type: http
-        httpMethod: GET
-        uri: https://your.domain.for.this.api/images/{id}/base64
-        requestTemplates:
-            application/json : "#set ($root=$input.path('$')) $root"
-        requestParameters:
-            integration.request.path.id: method.request.path.id
-        responses:
-          default:
-            statusCode: "200"
-            responseParameters:
-              method.response.header.Content-Type: "'image/png'"
-            contentHandling: convert_to_binary
+        type: aws_proxy
+        httpMethod: POST
+        passthroughBehavior: when_no_match

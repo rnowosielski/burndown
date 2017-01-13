@@ -1,4 +1,5 @@
 'use strict'
+require("./src/configure")();
 var winston = require('winston');
 const app = require('./src/app')
 

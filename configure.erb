@@ -1,0 +1,35 @@
+module.exports = function() {
+  <% if @jira_url and @jira_url != "" %>
+  if (!process.env.jiraUrl) {
+    process.env.jiraUrl = "<%= @jira_url %>"
+  }
+  <% end %>
+  if (!process.env.waitForSelector) {
+    process.env.waitForSelector = "canvas.overlay"
+  }
+
+  if (!process.env.renderSelector) {
+    process.env.renderSelector = "#ghx-chart-wrap"
+  }
+  <% if @jira_user and @jira_user != "" %>
+  if (!process.env.jiraUser) {
+    process.env.jiraUser = "<%= @jira_user %>"
+  }
+  <% end %><% if @jira_password and @jira_password != "" %>
+  if (!process.env.jiraPassword) {
+    process.env.jiraPassword = "<%= @jira_password %>"
+  }
+  <% end %><% if @s3_bucket and @s3_bucket != "" %>
+  if (!process.env.s3bucket) {
+    process.env.s3bucket = "<%= @s3_bucket %>"
+  }
+  <% end %><% if @dynamo_table and @dynamo_table != "" %>
+  if (!process.env.dynamnoDbTable) {
+    process.env.dynamnoDbTable = "<%= @dynamo_table %>"
+  }
+  <% end %><% if @hipchat_group and @hipchat_group != "" %>
+  if (!process.env.hipchatGroup) {
+    process.env.hipchatGroup = "<%= @hipchat_group %>"
+  }
+  <% end %>
+};

@@ -63,6 +63,12 @@ function retrievePageImage(urlToRetrieve, waitForSelector, extractSelector, cred
         if (status === "success") {
             console.log("Waiting for [" + waitForSelector + "]")
             waitForElement(waitForSelector, function () {
+                page.evaluate(function() {
+                    var element = document.getElementById("ghx-chart-show-non-working-days");
+                    if (element.checked) {
+                      element.click();
+                    }
+                });
                 console.log("Extracting [" + extractSelector + "]")
                 var clipRect = page.evaluate(function (extractSelector) {
                     var layout = document.querySelector(extractSelector);
@@ -81,8 +87,7 @@ function retrievePageImage(urlToRetrieve, waitForSelector, extractSelector, cred
                     };
                 }
                 console.log("Rendering...")
-                var base64 = page.renderBase64('PNG');
-                fs.write("/tmp/capturedBase64", base64, 'w');
+                page.render('/tmp/capture.png', {format: 'png'});
                 console.log("Finishing execution of phantomjs")
                 phantom.exit();
             }, 30000);

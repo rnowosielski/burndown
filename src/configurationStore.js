@@ -9,8 +9,10 @@ var roomConfig = new dynamoose.Schema({
   capabilitiesUrl: String,
   groupId: String,
   oauthSecret: String,
-  viewId: String
+  viewId: String,
+  quietPeriod: Number,
+  lastMessageTimestamp: Date
 });
 
-var room = dynamoose.model('hipchat-integration', roomConfig);
-module.exports = room
+var room = dynamoose.model(process.env.dynamnoDbTable, roomConfig);
+module.exports = room;

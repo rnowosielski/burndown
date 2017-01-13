@@ -1,7 +1,7 @@
 "use strict";
 var requestify = require('requestify');
-const crypto = require('crypto');
 var Promise = require('promise');
+const crypto = require('crypto');
 
 function getAccessToken(oauthId, oauthSecret) {
   return new Promise((resolve, reject) => {
@@ -18,7 +18,11 @@ function getAccessToken(oauthId, oauthSecret) {
       if (body) {
         console.log(body)
       }
-      resolve(response.getBody().access_token);
+      if (process.env.hipchatGroup && (body.group_name != process.env.hipchatGroup)) {
+        reject("You need to belong to group " + process.env.hipchatGroup)
+      } else {
+        resolve(response.getBody().access_token);
+      }
     }).fail(function (response) {
       console.log("auth token: " + response.getCode());
       var body = response.getBody();

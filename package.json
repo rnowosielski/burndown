@@ -1,7 +1,7 @@
 {
   "name": "burndown",
   "version": "1.0.0",
-  "description": "Hipchat add-on that grabs burndown from jira and sends it to the hipchat room",
+  "description": "Hipchat add-on that grabs burndown charts from jira and sends it to the hipchat room",
   "main": "index.js",
   "dependencies": {
     "app-module-path": "^2.2.0",
@@ -11,6 +11,7 @@
     "express": "^4.14.0",
     "express-winston": "^2.1.2",
     "http-status": "^0.2.5",
+    "jwt-simple": "^0.5.1",
     "promise": "^7.1.1",
     "requestify": "^0.2.5",
     "swaggerize-express": "^4.0.5",
@@ -29,7 +30,11 @@
     "image",
     "hipchat",
     "integration",
-    "burndown"
+    "burndown",
+    "agile",
+    "jira",
+    "sprint",
+    "distributed team"
   ],
   "author": "Rafal Nowosielski",
   "license": "MIT"
