@@ -1,0 +1,36 @@
+{
+  "name": "burndown",
+  "version": "1.0.0",
+  "description": "Hipchat add-on that grabs burndown from jira and sends it to the hipchat room",
+  "main": "index.js",
+  "dependencies": {
+    "app-module-path": "^2.2.0",
+    "aws-serverless-express": "^1.2.0",
+    "body-parser": "^1.15.2",
+    "dynamoose": "^0.7.0",
+    "express": "^4.14.0",
+    "express-winston": "^2.1.2",
+    "http-status": "^0.2.5",
+    "promise": "^7.1.1",
+    "requestify": "^0.2.5",
+    "swaggerize-express": "^4.0.5",
+    "winston": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rnowosielski/burndown"
+  },
+  "keywords": [
+    "webgrabber",
+    "image",
+    "hipchat",
+    "integration",
+    "burndown"
+  ],
+  "author": "Rafal Nowosielski",
+  "license": "MIT"
+}

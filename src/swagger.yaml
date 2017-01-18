@@ -1,0 +1,122 @@
+---
+swagger: "2.0"
+info:
+  version: "2017-01-16T12:28:44Z"
+  title: "Hipchat Burndown"
+schemes:
+- "https"
+#x-amazon-apigateway-binary-media-types:
+#- image/png
+paths:
+  /install:
+    get:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+      description: Returns the hipchat integration descriptor
+      x-amazon-lambda-name: HipchatBurndown
+      x-amazon-lambda-handler: lambda.handler
+      x-amazon-lambda-runtime: nodejs4.3
+      x-amazon-lambda-timeout: 60
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+  /burndown:
+    post:
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+      x-amazon-lambda-name: HipchatBurndown
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+  /register:
+    post:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+      x-amazon-lambda-name: HipchatBurndown
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+  /installed:
+    post:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+      x-amazon-lambda-name: HipchatBurndown
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+  /images/{id}/base64:
+    get:
+      consumes:
+      - "application/json"
+      produces:
+      - "image/png"
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the resource
+        type: string
+        required: true
+      responses:
+        200:
+          description: "200 response"
+      x-amazon-lambda-name: HipchatBurndown
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+  /images/{id}/raw:
+    get:
+      produces:
+      - "image/png"
+      tags:
+        - Fulfillment Locations
+      summary: Retrieves the fulfillment location with the given ID
+      description: Retrieves the fulfillment location with the given ID
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the resource
+        type: string
+        required: true
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Content-Type:
+              type: string
+      x-amazon-apigateway-integration:
+        type: http
+        httpMethod: GET
+        uri: https://your.domain.for.this.api/images/{id}/base64
+        requestTemplates:
+            application/json : "#set ($root=$input.path('$')) $root"
+        requestParameters:
+            integration.request.path.id: method.request.path.id
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Content-Type: "'image/png'"
+            contentHandling: convert_to_binary
