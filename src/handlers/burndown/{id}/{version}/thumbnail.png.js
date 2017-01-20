@@ -52,7 +52,11 @@ module.exports = {
                  return new Date(a.LastModified).getTime() - new Date(b.LastModified).getTime();
               });
               winston.debug("Filtered and sorted versions", filteredAndSortedVersions);
-              resolve(filteredAndSortedVersions[0])
+              if (filteredAndSortedVersions.length == 0) {
+                reject("filteredAndSortedVersions is empty");
+              } else {
+                resolve(filteredAndSortedVersions[0]);
+              }
             }
           });
         });
