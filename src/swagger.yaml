@@ -2,7 +2,8 @@
 swagger: "2.0"
 info:
   version: "2017-01-16T12:28:44Z"
-  title: "Hipchat Burndown"
+  title: Hipchat Burndown
+  description: Extension that send the Jira burndown chart to a hipchat room
 schemes:
 - "https"
 paths:
