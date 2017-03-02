@@ -49,7 +49,7 @@ function upload_image_to_s3(hash, path) {
   });
 }
 
-function render_page(roomId, authToken, renderedPage) {
+function render_page(roomId, authToken, renderedPage, waitForSelector, renderSelector) {
   return new Promise((resolve, reject) => {
     let fileFromPhantom = "/tmp/capture.png";
     if (fs.existsSync(fileFromPhantom)) {
@@ -57,10 +57,10 @@ function render_page(roomId, authToken, renderedPage) {
     }
     winston.debug("Adding " + process.env['LAMBDA_TASK_ROOT'] + " to path",  process.env)
     process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT']
-    notification.send(roomId, authToken, "yellow", "text", "The cached image is a little out of date. Let me go and fetch the burndown from the web. It might take some time. After that the burndown will be cached for some time...")
+    notification.send(roomId, authToken, "yellow", "text", "The cached image is a little out of date... Let me go and fetch a new snapshot, it might take some time.")
     winston.debug("Running phantomjs");
     let program = spawn("phantomjs", ["render-page.js",
-      renderedPage, process.env.waitForSelector, process.env.renderSelector, process.env.jiraUser + ":" + process.env.jiraPassword], { cwd: __dirname + "/.." })
+      renderedPage, waitForSelector || process.env.waitForSelector, renderSelector || process.env.renderSelector, process.env.jiraUser + ":" + process.env.jiraPassword], { cwd: __dirname + "/.." })
     program.stdout.on('data', (data) => {
       winston.debug("phantomjs stdout: ", data.toString());
     });
@@ -69,7 +69,7 @@ function render_page(roomId, authToken, renderedPage) {
     });
     program.on('exit', (code) => {
       winston.debug(`Child process exited with code ${code}`);
-      let hash = crypto.createHash('sha1').update(renderedPage).digest('base64');
+      let hash = crypto.createHash('sha1').update(renderedPage).digest('hex');
       upload_image_to_s3(hash, fileFromPhantom).then(resolve, function() {
         return notification.send(roomId, authToken, "red", "text", "Failed to fetch the burndown").then(reject, reject)
       });
@@ -77,12 +77,12 @@ function render_page(roomId, authToken, renderedPage) {
   });
 }
 
-function get_burndown_card_mesage(req, hash, renderedPage, data) {
+function get_burndown_card_mesage(req, hash, renderedPage, title, data) {
   let card = {
     style: "link",
     url: `https://${req.apiGateway.event.headers.Host}/${req.apiGateway.event.requestContext.stage}/burndown/${hash}/${data.VersionId}/image.png`,
     id: "fee4d9a3-685d-4cbd-abaa-c8850d9b1960",
-    title: "Team's burndown chart",
+    title: `Team's ${title}`,
     format: "compact",
     description: {
       format: "html",
@@ -134,15 +134,17 @@ module.exports = {
                     winston.debug("Comparing times to asses the quite zone", { timeOfLastMessage: time, timeOfQuietZoneExpiry: new Date()});
                   }
                   if (roomConfiguration.viewId && (!time || time < new Date())) {
-                    let renderedPage = `${process.env.jiraUrl}/jira/secure/RapidBoard.jspa?rapidView=${roomConfiguration.viewId}&view=reporting&chart=burndownChart`;
-                    let hash = crypto.createHash('sha1').update(renderedPage).digest('base64');
+                    roomConfiguration.lastMessageTimestamp = new Date().getTime();
+                    roomConfiguration.save();
+                    let renderedPage = `${process.env.jiraUrl}/jira/secure/RapidBoard.jspa?rapidView=${roomConfiguration.viewId}&view=reporting&chart=${req.query.report}`;
+                    let hash = crypto.createHash('sha1').update(renderedPage).digest('hex');
                     let sendImageToRoom = function (data) {
                       return new Promise((resolve, reject) => {
                         try {
                           winston.debug("Will send burndown card to the room");
                           roomConfiguration.lastMessageTimestamp = new Date().getTime();
                           roomConfiguration.save(function (err) {
-                            notification.sendObject(roomId, accessToken, get_burndown_card_mesage(req, hash, renderedPage, data)).then(
+                            notification.sendObject(roomId, accessToken, get_burndown_card_mesage(req, hash, renderedPage, req.query.report.split(/(?=[A-Z])/).join(" ").replace(/\b\w/g, l => l.toUpperCase()) ,data)).then(
                               resolve, reject);
                           })
                         } catch (e) {
@@ -159,7 +161,7 @@ module.exports = {
                       let expired = new Date();
                       expired.setMinutes(expired.getMinutes() - 30);
                       if (err || (data.LastModified && new Date(data.LastModified) <= expired)) {
-                        render_page(roomId, accessToken, renderedPage).then(sendImageToRoom).then(complete_with_ok);
+                        render_page(roomId, accessToken, renderedPage, req.query.waitSelector, req.query.renderSelector).then(sendImageToRoom).then(complete_with_ok);
                       }
                       else {
                         sendImageToRoom(data).then(complete_with_ok);

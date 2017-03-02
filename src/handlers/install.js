@@ -13,11 +13,18 @@ module.exports = {
       capabilities: {
         webhook: [
           {
-            url: url + "/burndown",
+            url: url + "/burndown?report=burndownChart&renderSelector=%23ghx-chart-wrap&waitSelector=canvas.overlay",
             pattern: "([bB][uU][rR][nN][dD][oO][wW][nN])|([Ss][Pp][rR][iI][Nn][tT])|([sS][Tt][Aa]?[Nn]?[Dd][uU][pP])",
             event: "room_message",
             authentication: "jwt",
             name: "Burndown"
+          },
+          {
+            url: url + "/burndown?report=controlChart&renderSelector=%23control-chart&waitSelector=svg.ghx-svg-chart",
+            pattern: "([cC][oO][nN][tT][rR][oO][lL][ ]?[cC][hH][aA][rR][tT])",
+            event: "room_message",
+            authentication: "jwt",
+            name: "Control Chart"
           },
           {
             url: url + "/register",
