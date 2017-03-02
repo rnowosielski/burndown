@@ -3,15 +3,7 @@ module.exports = function() {
   if (!process.env.jiraUrl) {
     process.env.jiraUrl = "<%= @jira_url %>"
   }
-  <% end %>
-  if (!process.env.waitForSelector) {
-    process.env.waitForSelector = "canvas.overlay"
-  }
-
-  if (!process.env.renderSelector) {
-    process.env.renderSelector = "#ghx-chart-wrap"
-  }
-  <% if @jira_user and @jira_user != "" %>
+  <% end %><% if @jira_user and @jira_user != "" %>
   if (!process.env.jiraUser) {
     process.env.jiraUser = "<%= @jira_user %>"
   }

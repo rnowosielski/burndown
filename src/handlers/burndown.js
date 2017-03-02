@@ -60,7 +60,7 @@ function render_page(roomId, authToken, renderedPage, waitForSelector, renderSel
     notification.send(roomId, authToken, "yellow", "text", "The cached image is a little out of date... Let me go and fetch a new snapshot, it might take some time.")
     winston.debug("Running phantomjs");
     let program = spawn("phantomjs", ["render-page.js",
-      renderedPage, waitForSelector || process.env.waitForSelector, renderSelector || process.env.renderSelector, process.env.jiraUser + ":" + process.env.jiraPassword], { cwd: __dirname + "/.." })
+      renderedPage, waitForSelector, renderSelector, process.env.jiraUser + ":" + process.env.jiraPassword], { cwd: __dirname + "/.." })
     program.stdout.on('data', (data) => {
       winston.debug("phantomjs stdout: ", data.toString());
     });

@@ -21,9 +21,14 @@ function waitFor(testFx, onReady, timeOutMillis) {
             if ( (new Date().getTime() - start < maxtimeOutMillis) && !condition ) {
                 condition = (typeof(testFx) === "string" ? eval(testFx) : testFx());
             } else {
-                console.log("'waitFor()' finished in " + (new Date().getTime() - start) + "ms.");
-                typeof(onReady) === "string" ? eval(onReady) : onReady();
-                clearInterval(interval);
+                if(!condition) {
+                    console.log("'waitFor()' timeout");
+                    phantom.exit(1);
+                } else {
+                    console.log("'waitFor()' finished in " + (new Date().getTime() - start) + "ms.");
+                    typeof(onReady) === "string" ? eval(onReady) : onReady();
+                    clearInterval(interval);
+                }
             }
         }, 250);
 };
