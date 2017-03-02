@@ -26,7 +26,9 @@ function waitFor(testFx, onReady, timeOutMillis) {
                     phantom.exit(1);
                 } else {
                     console.log("'waitFor()' finished in " + (new Date().getTime() - start) + "ms.");
-                    typeof(onReady) === "string" ? eval(onReady) : onReady();
+                    setTimeout(function() {
+                      typeof(onReady) === "string" ? eval(onReady) : onReady();
+                    }, 1000);
                     clearInterval(interval);
                 }
             }

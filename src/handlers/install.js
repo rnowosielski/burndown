@@ -20,7 +20,7 @@ module.exports = {
             name: "Burndown"
           },
           {
-            url: url + "/burndown?report=controlChart&renderSelector=%23control-chart&waitSelector=g.layer mean",
+            url: url + "/burndown?report=controlChart&renderSelector=%23control-chart&waitSelector=g.aggregate-mean",
             pattern: "([cC][oO][nN][tT][rR][oO][lL][ ]?[cC][hH][aA][rR][tT])",
             event: "room_message",
             authentication: "jwt",
